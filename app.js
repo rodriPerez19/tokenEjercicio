@@ -82,6 +82,8 @@ app.post("/user/verify/:email/:pass",(req,res)=>{
                     }
                 });
             }
+            else
+            res.send("no pudimos verificar su token")
         });
     }
     else
