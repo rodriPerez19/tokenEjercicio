@@ -64,19 +64,29 @@ app.post("/user/:email/:name/:pass/:role",(req,res)=>{
 
 
 app.post("/user/verify/:email/:pass",(req,res)=>{
-    
+
+    const token= req.headers.authorization.split(" ")[1]
     const email= req.params.email;
     const pass= req.params.pass;
 
-    users.find((user)=>{
-        if(user.email== email){
-            bcrypt.compare(pass,user.pass,(err,hash)=>{
-                if(!err){
-                    res.send(`verify ${hash} `);
-                }
-            });
-        }
-    });
+    if(token){
+        jsonwebtoken.verify(token,pass,(err,payload)=>{
+            if(!err){
+                users.find((user)=>{
+                    if(user.email== email){
+                        bcrypt.compare(pass,user.pass,(err,hash)=>{
+                            if(!err){
+                                res.send(`verify ${hash} `);
+                            }
+                        });
+                    }
+                });
+            }
+        });
+    }
+    else
+     res.send("el token no llego");
+   
 });
 
 app.listen(PORT,()=>{
